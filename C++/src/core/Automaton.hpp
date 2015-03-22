@@ -30,6 +30,8 @@
 #include "State.hpp"
 #include "StateCreateGraph.hpp"
 #include "StateFindPath.hpp"
+#include "../data/GraphList.hpp"
+#include "../other/ParseString.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -47,7 +49,7 @@ private:
 	//std::stringstream* inputStream;
 	State* state;
 	std::vector<std::string> lines;
-	int** graph;
+	GraphList graph;
 
 protected:
 
@@ -95,11 +97,14 @@ public:
 					log->info_line("Changing state to 1.");
 					delete state;
 					state = new StateCreateGraph();
+					graph.clear();
+					state->run(line,graph);
 					break;
 				case 2:
 					log->info_line("Changing state to 2.");
 					delete state;
 					state = new StateFindPath();
+					state->run(line,graph);
 					break;
 				case 3:
 					log->info_line("Ending, because of input has 0 0 0.");
@@ -122,17 +127,7 @@ public:
 	/************************************************* Setters *******************************************************/
 	void setInput(std::string input) {
 		log->debug_line("Setting input string in automaton...");
-		//log->debug_line(input);
-
-		size_t pos = 0;
-		std::string token;
-		std::string delimiter = "\n";
-		while((pos = input.find(delimiter)) != std::string::npos) {
-			token = input.substr(0, pos);
-			lines.push_back(token);
-			input.erase(0, pos + delimiter.length());
-		}
-
+		lines = parseString(input, "\n");
 	}
 
 };

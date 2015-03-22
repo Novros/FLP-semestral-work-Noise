@@ -22,10 +22,14 @@
 // STL HEADERS
 #include <iostream>
 #include <string>
+#include <vector>
  
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
 #include "State.hpp"
+#include "../data/GraphList.hpp"
+//#include "../other/ParseString.hpp"
+
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -53,8 +57,15 @@ public:
 	/*********************************************** Constructors ****************************************************/
 
 	/************************************************** Others *******************************************************/
-	int run(std::string line, int** graph) {
+	int run(std::string line, GraphList graph) {
 		std::cout << line << std::endl;
+		std::vector<std::string> values = ParseString(line, " ");
+
+		if(values.size() == 2) {
+			return 2;
+		}
+
+		graph.put(std::stoi(values[0]),std::stoi(values[1]),std::stoi(values[2]))
 		return 0;
 	}
 
