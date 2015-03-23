@@ -14,10 +14,10 @@ run: all
 	./$(EXE) test.txt
 
 debug: all
-	$(DEBUGGER) ./$(EXE)
+	$(DEBUGGER) ./$(EXE) test.txt
 
 debug-memory: all
-	$(DEBUGGER) --leak-check=full --show-leak-kinds=all ./$(EXE)
+	$(DEBUGGER) --leak-check=full --show-leak-kinds=all ./$(EXE) test.txt
 
 rebuild:
 	make clean && make

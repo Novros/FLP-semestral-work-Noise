@@ -126,7 +126,7 @@ public:
 				}
 			}
 		}
-		return -1;
+		return 0;
 	}
 
 	void printGraph() {

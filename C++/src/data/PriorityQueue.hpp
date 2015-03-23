@@ -20,15 +20,10 @@
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // STL HEADERS
-#include <iostream>
 #include <vector>
-#include <queue>
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
-#include "State.hpp"
-#include "../data/GraphList.hpp"
-#include "../data/PriorityQueue.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -37,46 +32,11 @@
  *
  * @author Rostislav Novak
 */
-class StateFindPath: public State {
+class PriorityQueue {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
-	int findLeastPath(const GraphList & graph, const int & from, const int & to) const {
-		int N = graph.getN();
-		int distance[N];
-		int path[N];
-		PriorityQueue q;
-		
-		distance[from] = 0;
-		path[from] = 0;
-		q.push(from);
-		// Inicializace
-		for(int j = 0; j < N; j++) {
-			if(j != from) {
-				distance[j] = 9999;
-				path[j] = 0;		
-				q.push(j);
-			}
-		}
-
-		//Dijsktra
-		int v;
-		while(!q.empty()) {
-			v = q.pop(distance);
-
-			std::vector<int> vector = graph.get(v);
-			for (std::vector<int>::iterator i = vector.begin(); i != vector.end(); ++i)	{
-				int alt = distance[v] + graph.get(v,*i);
-				if(alt < distance[*i]) {
-					distance[*i] = alt;
-					path[*i] = v;
-				}
-			}
-		}
-		
-		return distance[to];
-	}
-
+	std::vector<int> vec;
 protected:
 
 public:
@@ -88,23 +48,33 @@ private:
 protected:
 
 public:
+	void push(const int & i) {
+		vec.push_back(i);
+	}
+
+	int pop(int* distance) {
+		int num = *vec.begin();
+		std::vector<int>::iterator remove = vec.begin();
+		for (std::vector<int>::iterator i = vec.begin(); i != vec.end(); ++i)
+		{
+			if(distance[*i] < distance[num]) {
+				num = *i;
+				remove = i;
+			}
+		}
+
+		vec.erase(remove);
+
+		return num;
+	}
+
+	bool empty() const {
+		return vec.empty();
+	}
+
 	/*********************************************** Constructors ****************************************************/
 
 	/************************************************** Others *******************************************************/
-	int run(std::string line, GraphList & graph) {
-		std::vector<std::string> values = parseString(line, " ");
-		if(values.size() == 3) {
-			return 1;
-		}
 
-		int result = findLeastPath(graph, std::stoi(values[0]),std::stoi(values[1]));
-		if(result == 9999) {
-			std::cout << "no path" << std::endl;
-		} else {
-			std::cout << result << std::endl;
-		}		
-		
-		return 0;
-	}
 };
 

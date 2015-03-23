@@ -76,6 +76,12 @@ public:
 		error_stream->rdbuf(std::cerr.rdbuf());
 	}
 
+	~Logger() {
+		delete out_stream;
+		delete error_stream;
+		delete debug_stream;
+	}
+
 	/************************************************* Setters *******************************************************/
 	void setOutputStream(std::ostream & stream) {
 		out_stream->rdbuf(stream.rdbuf());

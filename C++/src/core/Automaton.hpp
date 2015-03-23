@@ -31,6 +31,7 @@
 #include "StateFindPath.hpp"
 #include "../data/GraphList.hpp"
 #include "../other/ParseString.hpp"
+#include "../other/OutputToFile.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -45,11 +46,9 @@ class Automaton {
 private:
 	int caseNumber = 1;
 	rlib::Logger* log;
-	//std::stringstream* inputStream;
 	State* state;
 	std::vector<std::string> lines;
 	GraphList graph;
-
 protected:
 
 public:
@@ -69,7 +68,7 @@ public:
 	void run();
 
 	void newGraph() {
-		std::cout << "Case #" << caseNumber << std::endl;
+		std::cout << "\nCase #" << caseNumber << std::endl;
 		graph.clear();
 		caseNumber++;
 	}
@@ -78,7 +77,7 @@ public:
 
 	/************************************************* Setters *******************************************************/
 	void setInput(std::string input) {
-		log->debug_line("Setting input string in automaton...");
+		//log->debug_line("Setting input string in automaton...");
 		lines = parseString(input, "\n");
 	}
 
