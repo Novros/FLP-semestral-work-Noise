@@ -129,7 +129,7 @@ public:
 		return 0;
 	}
 
-	void printGraph() {
+	void printGraph() const {
 		for(auto i = graph.begin(); i != graph.end(); ++i) {
 			std::cout << std::get<0>(*i) << ": ";
 			for(auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j) {
