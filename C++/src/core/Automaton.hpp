@@ -20,9 +20,14 @@
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // STL HEADERS
+#include <iostream>
+#include <sstream>
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
+#include "../other/Logger.hpp"
+#include "State.hpp"
+#include "StateCreateGraph.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -35,6 +40,10 @@ class Automaton {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
+	// TODO to smart pointers
+	rlib::Logger* log;
+	std::stringstream* inputStream;
+	State* state;
 
 protected:
 
@@ -48,12 +57,38 @@ protected:
 
 public:
 	/*********************************************** Constructors ****************************************************/
+	Automaton() {
+		// Set logger
+		log = new rlib::Logger("Automaton",true);
+		log->info_line("Creating automaton...");
+
+		// Set input stream
+		inputStream = new std::stringstream();		
+		auto buf = std::cin.rdbuf();
+		*inputStream << buf;
+
+		// Set state
+		state = new StateCreateGraph();
+
+	}
+
+	~Automaton() {
+		delete log;
+	}
 
 	/************************************************** Others *******************************************************/
+	void run() {
+		
+	}
 
 	/************************************************* Getters *******************************************************/
 
 	/************************************************* Setters *******************************************************/
+	void setInput(std::streambuf* inputStreamBuffer) {
+		log->debug_line("Setting inputSteam in automaton...");
+		// TODO repair
+		*inputStream << inputStreamBuffer;
+	}
 
 };
 

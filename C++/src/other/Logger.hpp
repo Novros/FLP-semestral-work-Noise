@@ -46,6 +46,7 @@ private:
 	const std::string DEBUG_TAG = "[DEBUG]";
 
 	// TODO Add option to set output.
+	// TODO to smart pointers
 	std::ostream *out_stream;
 	std::ostream *error_stream;
 	std::ostream *debug_stream;

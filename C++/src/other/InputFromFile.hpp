@@ -59,6 +59,12 @@ public:
 		inputStream.close();
 	}
 
+	/************************************************* Getters *******************************************************/
+	// TODO to smart pointers
+	std::streambuf* getStream() {
+		return inputStream.rdbuf();
+	}
+
 	/************************************************** Others *******************************************************/
 
 	std::string readLine() {
