@@ -5,8 +5,7 @@ LDFLAGS =
 EXE = test
 DEBUGGER = valgrind
 
-OBJECTS = objects/main.o objects/Automaton.o objects/StateCreateGraph.o objects/StateFindPath.o
-
+OBJECTS = objects/main.o objects/State.o objects/Automaton.o
 all: $(EXE)
 
 build: $(EXE)
@@ -35,13 +34,9 @@ objects/Automaton.o: src/core/Automaton.cpp src/core/Automaton.hpp
 	mkdir -p objects
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-objects/StateCreateGraph.o: src/core/StateCreateGraph.cpp src/core/StateCreateGraph.hpp
+objects/State.o: src/core/State.cpp src/core/State.hpp
 	mkdir -p objects
 	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-objects/StateFindPath.o: src/core/StateFindPath.cpp src/core/StateFindPath.hpp
-	mkdir -p objects
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
+	
 clean:
 	rm -r objects && rm $(EXE)

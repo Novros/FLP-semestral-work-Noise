@@ -20,7 +20,6 @@
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // STL HEADERS
-#include <iostream>
 #include <vector>
 #include <string>
 
@@ -44,7 +43,7 @@ class Automaton {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
-	// TODO to smart pointers
+	int caseNumber = 1;
 	rlib::Logger* log;
 	//std::stringstream* inputStream;
 	State* state;
@@ -63,63 +62,16 @@ protected:
 
 public:
 	/*********************************************** Constructors ****************************************************/
-	Automaton() {
-		// Set logger
-		log = new rlib::Logger("Automaton",true);
-		log->info_line("Creating automaton...");
-
-		// Set input stream
-		/*inputStream = new std::stringstream();		
-		std::cin.rdbuf(inputStream->rdbuf());
-		*inputStream << buf;*/
-
-		// Set state
-		state = new StateCreateGraph();
-
-	}
-
-	~Automaton() {
-		delete log;
-	}
+	Automaton();
+	~Automaton();
 
 	/************************************************** Others *******************************************************/
-	void run() {
-		int transition;
-		bool end = false;
-		for(auto &line : lines) {
-			// Text line to state, send graph table
-			transition = state->run(line, graph);
-			// Check if not new state
-			switch(transition) {
-				case 0:
-					break;
-				case 1:
-					log->info_line("Changing state to 1.");
-					delete state;
-					state = new StateCreateGraph();
-					graph.clear();
-					state->run(line,graph);
-					break;
-				case 2:
-					log->info_line("Changing state to 2.");
-					delete state;
-					state = new StateFindPath();
-					state->run(line,graph);
-					break;
-				case 3:
-					log->info_line("Ending, because of input has 0 0 0.");
-					end = true;
-					break;
-				default:
-					log->error_line("Bad transition number.");
-					end = true;
-					break;
-			}
-			// if zero, end
-			if(end) {
-				break;
-			}
-		}
+	void run();
+
+	void newGraph() {
+		std::cout << "Case #" << caseNumber << std::endl;
+		graph.clear();
+		caseNumber++;
 	}
 
 	/************************************************* Getters *******************************************************/

@@ -20,7 +20,6 @@
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // STL HEADERS
-#include <iostream>
 #include <string>
 #include <vector>
  
@@ -28,7 +27,7 @@
 // OWN HEADERS
 #include "State.hpp"
 #include "../data/GraphList.hpp"
-//#include "../other/ParseString.hpp"
+#include "../other/ParseString.hpp"
 
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -38,7 +37,7 @@
  *
  * @author Rostislav Novak
 */
-class StateCreateGraph: public State {
+class StateCreateGraph : public State {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
@@ -57,17 +56,17 @@ public:
 	/*********************************************** Constructors ****************************************************/
 
 	/************************************************** Others *******************************************************/
-	int run(std::string line, GraphList graph) {
-		std::cout << line << std::endl;
-		std::vector<std::string> values = ParseString(line, " ");
-
+	int run(std::string line, GraphList & graph) {
+		std::vector<std::string> values = parseString(line, " ");
+		
 		if(values.size() == 2) {
 			return 2;
+		} else if ( (std::stoi(values[0]) == 0) && (std::stoi(values[0]) == std::stoi(values[1])) && (std::stoi(values[0]) == std::stoi(values[1])) ) {
+			return 3;
 		}
 
-		graph.put(std::stoi(values[0]),std::stoi(values[1]),std::stoi(values[2]))
+		graph.put(std::stoi(values[0]),std::stoi(values[1]),std::stoi(values[2]));
 		return 0;
 	}
-
 };
 
