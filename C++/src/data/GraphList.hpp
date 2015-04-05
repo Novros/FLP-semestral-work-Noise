@@ -39,6 +39,7 @@ class GraphList {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
+	int N = 0;
 	std::vector< std::pair< int,std::vector< std::pair< int, int > > > > graph;
 protected:
 
@@ -57,7 +58,14 @@ public:
 	}
 
 	/************************************************** Others *******************************************************/
+	int getN() const {
+		return N;
+	}
+
 	void put (const int & from, const int & to, const int & value) {
+		if(to > N) {
+			N = to;
+		}
 		bool added = false;
 		for (auto i = graph.begin(); i != graph.end(); ++i) {
 			if(std::get<0>(*i) < from) {
@@ -95,7 +103,7 @@ public:
 		}
 	}
 
-	std::vector<int> get (const int & position) {
+	std::vector<int> get (const int & position) const {
 		std::vector<int> vector;
 		for (auto i = graph.begin(); i != graph.end(); ++i) {
 			if(std::get<0>(*i) == position) {
@@ -108,7 +116,7 @@ public:
 		return vector;
 	}
 
-	int get (const int & first, const int second) {
+	int get (const int & first, const int second) const {
 		for (auto i = graph.begin(); i != graph.end(); ++i) {
 			if(std::get<0>(*i) == first) {
 				for (auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j){

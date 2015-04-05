@@ -22,6 +22,7 @@
 // STL HEADERS
 #include <iostream>
 #include <vector>
+#include <queue>
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
@@ -40,46 +41,41 @@ class StateFindPath: public State {
 	// Variables
 private:
 	int findLeastPath(const GraphList & graph, const int & from, const int & to) const {
-		int actualNode = from;
-		int result = 0;
-		find();
-		return result;
-	}
+		int N = graph.getN();
+		int distance[N];
+		int path[N];
+		std::queue<int> q;
+		for(int i = 0; i < N; i++) {
 
-	int void find(const GraphList & graph, const int & from, const int & to) {
-		// Pokud jsem v cíli, dál nepokračuj.
-		if(from == to) {
-			return 0;
-		}
-
-		int value = -1;
-		int returnedValue = 0;
-		bool end = false;
-
-		// Hledej dokud nejsi na konci.
-		while(!end) {
-			// Podívej se na všechny cesty z toho uzlu.
-			auto paths = graph.get(from);
-			// Pokud nejsou další cesty ukonči smyčku a vrať -1.
-			if(paths.size() == 0) {
-				return -1;
+			// Inicializace
+			q.push(i);
+			distance[i] = 0;
+			for(int j = 0; j < N; j++) {
+				if( j != i ) {
+					q.push(j);
+					distance[j] = 9999;
+				}
+				path[j] = 0;
 			}
-			// Pro každou možnou cestu
-			for (std::vector<int>::iterator i = paths.begin(); i != paths.end(); ++i) {
-				// Pokud existuje z tohoto uzlu do cílového uzlu cesta, vrať jeho hodnotu.
-				if(*i == to) {
-					return graph.get(from,to);
+
+			//Dijsktra
+			int v, w;
+			while(!q.empty()) {
+				v = q.front();
+				q.pop();
+				for(int j = 0; j < N; j++) {
+					if(graph.get(v,j) != -1) {
+						w = j;
+						if( (distance[v] + graph.get(v,j)) < distance[w]) {
+							distance[w] = distance[v] + graph.get(v,j);
+							path[w] = v;
+						}
+					}
 				}
-				// Pokud ne, hledej dál.
-				returnedValue = find(graph,*i,to);
-				// Není cesta
-				if(returnedValue == -1) {
-					return -1;
-				}
-				value += graph.get(from, *i) + returnedValue;
 			}
 		}
-		return value;
+
+		return distance[to];
 	}
 
 protected:
