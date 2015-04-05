@@ -29,6 +29,7 @@
 #include "../other/Logger.hpp"
 #include "State.hpp"
 #include "StateCreateGraph.hpp"
+#include "StateFindPath.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 /**
@@ -46,6 +47,7 @@ private:
 	//std::stringstream* inputStream;
 	State* state;
 	std::vector<std::string> lines;
+	int** graph;
 
 protected:
 
@@ -80,7 +82,39 @@ public:
 
 	/************************************************** Others *******************************************************/
 	void run() {
-
+		int transition;
+		bool end = false;
+		for(auto &line : lines) {
+			// Text line to state, send graph table
+			transition = state->run(line, graph);
+			// Check if not new state
+			switch(transition) {
+				case 0:
+					break;
+				case 1:
+					log->info_line("Changing state to 1.");
+					delete state;
+					state = new StateCreateGraph();
+					break;
+				case 2:
+					log->info_line("Changing state to 2.");
+					delete state;
+					state = new StateFindPath();
+					break;
+				case 3:
+					log->info_line("Ending, because of input has 0 0 0.");
+					end = true;
+					break;
+				default:
+					log->error_line("Bad transition number.");
+					end = true;
+					break;
+			}
+			// if zero, end
+			if(end) {
+				break;
+			}
+		}
 	}
 
 	/************************************************* Getters *******************************************************/
