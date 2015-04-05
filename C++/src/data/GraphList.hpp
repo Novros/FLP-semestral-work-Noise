@@ -39,8 +39,8 @@ class GraphList {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
-	int N = 0;
-	std::vector< std::pair< int,std::vector< std::pair< int, int > > > > graph;
+	int N = -1;
+	int** graph;
 protected:
 
 public:
@@ -54,7 +54,10 @@ protected:
 public:
 	/*********************************************** Constructors ****************************************************/
 	GraphList() {
+	}
 
+	~GraphList() {
+		deleteGraph();
 	}
 
 	/************************************************** Others *******************************************************/
@@ -63,83 +66,59 @@ public:
 	}
 
 	void put (const int & from, const int & to, const int & value) {
-		if(to > N) {
-			N = to;
-		}
-		bool added = false;
-		for (auto i = graph.begin(); i != graph.end(); ++i) {
-			if(std::get<0>(*i) < from) {
-			} else if(std::get<0>(*i) == from) {
-				for (auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j) {
-					if(std::get<0>(*j) < to) {
-					// Problém když je to rovno.
-					} else {
-						std::get<1>(*i).insert(j, std::make_pair(to, value));
-						added = true;
-						break;
-					}
-				}
-				if(!added) {
-					std::get<1>(*i).insert(std::get<1>(*i).end(), std::make_pair(to, value));
-					added = true;	
-				}
-			} else {
-				auto pair = std::make_pair(to,value);
-				std::vector<std::pair<int,int> > vector;
-				vector.push_back(pair);
-				graph.insert(i, std::make_pair(from,vector));
-				added = true;
-			}
-			if(added) {
-				break;
-			}
-		}
-
-		if(!added) {
-			auto pair = std::make_pair(to,value);
-			std::vector<std::pair<int,int> > vector;
-			vector.push_back(pair);
-			graph.insert(graph.end(), std::make_pair(from,vector));
-		}
+		graph[from-1][to-1] = value;
 	}
 
 	std::vector<int> get (const int & position) const {
 		std::vector<int> vector;
-		for (auto i = graph.begin(); i != graph.end(); ++i) {
-			if(std::get<0>(*i) == position) {
-				for (auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j){
-					vector.push_back(std::get<0>(*j));
-				}
+		for (int i = 0; i < N; ++i)
+		{
+			if(graph[position-1][i] > 0) {
+				vector.push_back(i+1);
 			}
 		}
 		return vector;
 	}
 
 	int get (const int & first, const int second) const {
-		for (auto i = graph.begin(); i != graph.end(); ++i) {
-			if(std::get<0>(*i) == first) {
-				for (auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j){
-					if(std::get<0>(*j) == second) {
-						return std::get<1>(*j);
-					}
-				}
-			}
-		}
-		return 0;
+		return graph[first-1][second-1];
 	}
 
 	void printGraph() const {
-		for(auto i = graph.begin(); i != graph.end(); ++i) {
-			std::cout << std::get<0>(*i) << ": ";
-			for(auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j) {
-				std::cout << "(" << std::get<0>(*j) << "," << std::get<1>(*j) << ") ";
+		for (int i = 0; i < N; ++i)
+		{
+			for (int j = 0; j < N; ++j)
+			{
+				std::cout << graph[i][j] << "\t";
 			}
 			std::cout << std::endl;
 		}
 	}
 
-	void clear() {
-		graph.clear();
+	void clear(const int & N) {
+		if(this->N > 0) {
+			deleteGraph();
+		}
+		this->N = N;
+		createGraph();
+	}
+
+	void deleteGraph() {
+		for (int i = 0; i < N; ++i) {
+			delete[] graph[i];
+		}
+		delete[] graph;
+	}
+
+	void createGraph() {
+		graph = new int*[N];
+		for (int i = 0; i < N; ++i) {
+			graph[i] = new int[N];
+			for (int j = 0; j < N; ++j)
+			{
+				graph[i][j] = 0;
+			}
+		}
 	}
 };
 

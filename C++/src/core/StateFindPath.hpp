@@ -93,7 +93,7 @@ private:
 		stav[u] = OPEN;
 		std::vector<int> adjected = graph.get(u);
 		for (auto i = adjected.begin(); i != adjected.end(); ++i) {
-			if (stav[*i] == FRESH) {
+			if (stav[*i] == FRESH ) {
 				path[*i] = u;
 				if(*i == to) {	
 					decibels.push_back(findDecibelMaxValue(graph));
@@ -121,7 +121,7 @@ private:
 		init(graph);
 
 		std::cout << "Find: " << from << " -> " << to << std::endl;
-		graph.printGraph();
+		//graph.printGraph();
 
 		DFSProjdi(graph,from);
 		return getLeastDecibels();
@@ -131,6 +131,10 @@ protected:
 
 public:
 	/*********************************************** Constructors ****************************************************/
+	~StateFindPath() {
+		delete[] stav;
+		delete[] path;
+	}
 
 	/************************************************** Others *******************************************************/
 	int run(std::string line, GraphList & graph) {

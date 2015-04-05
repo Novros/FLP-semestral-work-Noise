@@ -67,9 +67,9 @@ public:
 	/************************************************** Others *******************************************************/
 	void run();
 
-	void newGraph() {
+	void newGraph(const int & N) {
 		std::cout << "\nCase #" << caseNumber << std::endl;
-		graph.clear();
+		graph.clear(N);
 		caseNumber++;
 	}
 
