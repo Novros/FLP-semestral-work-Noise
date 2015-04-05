@@ -22,13 +22,11 @@
 // STL HEADERS
 #include <iostream>
 #include <vector>
-#include <queue>
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
 #include "State.hpp"
 #include "../data/GraphList.hpp"
-#include "../data/PriorityQueue.hpp"
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // CONSTANTS
@@ -48,12 +46,10 @@ class StateFindPath: public State {
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Variables
 private:
-	int* stav;
-	int* path;
-	std::vector<int> decibels;
 	int N;
 	int from;
 	int to;
+	int minDecibels = INFINITY;
 protected:
 
 public:
@@ -61,70 +57,40 @@ public:
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 	// Methods
 private:
-	void init(const GraphList & graph) {
-		decibels.clear();
-		delete[] stav;
-		delete[] path;
-
-		int N = graph.getN();
-		stav = new int[N];
-		path = new int[N];
-		for (int i = 0; i < N; ++i) {
-			stav[i] = FRESH; 
-			path[i] = -1;
-		}
-	}
-
-	int findDecibelMaxValue(const GraphList & graph) {
-		int max = 0;
-		int temp = to;
-		//std::cout << std::endl;
-		while(temp != from) {
-			//std::cout << path[temp] << "-> " << temp << " " << graph.get(path[temp],temp) << std::endl;
-			if(graph.get(path[temp],temp) > max) {
-				max = graph.get(path[temp],temp);
-			}
-			temp = path[temp];
-		}
-		return max;
-	}
-
-	void DFSProjdi(const GraphList & graph, int u) {
-		stav[u] = OPEN;
-		std::vector<int> adjected = graph.get(u);
-		for (auto i = adjected.begin(); i != adjected.end(); ++i) {
-			if (stav[*i] == FRESH ) {
-				path[*i] = u;
-				if(*i == to) {	
-					decibels.push_back(findDecibelMaxValue(graph));
-				}
-				DFSProjdi(graph, *i);
-			}
-		}
-		stav[u] = CLOSED;
-	}
-
-	int getLeastDecibels() {
-		int min = INFINITY;
-		for (std::vector<int>::iterator i = decibels.begin(); i != decibels.end(); ++i) {
-			if(*i < min) {
-				min = *i;
-			}
-		}
-		return min;
-	}
-
-
-	int findLeastPath(const GraphList & graph, const int & from, const int & to) {
+	void findLeastPath(const GraphList & graph, const int & from, const int & to) {
+		// Ulož si hodnoty
 		this->from = from;
 		this->to = to;
-		init(graph);
+		this->N = graph.getN();
+		minDecibels = INFINITY;
 
-		std::cout << "Find: " << from << " -> " << to << std::endl;
-		//graph.printGraph();
+		DFSProjdi(graph, from, 0, 0);
+	}
 
-		DFSProjdi(graph,from);
-		return getLeastDecibels();
+	void DFSProjdi(const GraphList & graph, const int & u, const int & maxDecibels, const int & edgeCount) {
+		// Pokdu jsi v maximální hloubce, ukonči (Max hloubka = počet hran)
+		if(edgeCount > graph.getE()) {
+			return;
+		}
+		// Získej všechny sousedy
+		std::vector<int> adjected = graph.get(u);
+		// Pro každého souseda proveď
+		for (auto i = adjected.begin(); i != adjected.end(); ++i) {
+			// Pokud je to cíl, ulož minimální hodnotu pro tuto cestu a vrať se
+			if(*i == to) {
+				int temp = (maxDecibels < graph.get(u, *i)) ? graph.get(u,*i) : maxDecibels;
+				if(minDecibels > temp) {
+					minDecibels = temp;
+				}
+				return;
+			}
+			// Jdi do dalšího uzlu
+			if(maxDecibels < graph.get(u,*i)) {
+				DFSProjdi(graph, *i, graph.get(u, *i), edgeCount+1);
+			} else {
+				DFSProjdi(graph, *i, maxDecibels, edgeCount+1);
+			}
+		}
 	}
 
 protected:
@@ -132,8 +98,6 @@ protected:
 public:
 	/*********************************************** Constructors ****************************************************/
 	~StateFindPath() {
-		delete[] stav;
-		delete[] path;
 	}
 
 	/************************************************** Others *******************************************************/
@@ -143,11 +107,11 @@ public:
 			return 1;
 		}
 
-		int result = findLeastPath(graph, std::stoi(values[0]), std::stoi(values[1]));
-		if(result == 9999) {
+		findLeastPath(graph, std::stoi(values[0]), std::stoi(values[1]));
+		if(minDecibels == 9999) {
 			std::cout << "no path" << std::endl;
 		} else {
-			std::cout << result << std::endl;
+			std::cout << minDecibels << std::endl;
 		}		
 		
 		return 0;

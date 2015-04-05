@@ -1,16 +1,10 @@
 #include "Automaton.hpp"
 
 Automaton::Automaton() {
-	// Set //logger
-	log = new rlib::Logger("Automaton",true);
-	//log->info_line("Creating automaton...");
-
-	// Set state
-	state = new StateCreateGraph();
 }
 
 Automaton::~Automaton() {
-	delete log;
+	delete state;
 }
 
 void Automaton::run() {
@@ -28,6 +22,7 @@ void Automaton::run() {
 		delete state;
 		state = new StateCreateGraph();
 		newGraph(C);
+		graph.setE(S);
 		for(int i = 0; i < S; i++, line++) {
 			state->run(lines[line], graph);
 		}

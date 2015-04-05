@@ -40,9 +40,9 @@ class GraphList {
 	// Variables
 private:
 	int N = -1;
+	int E = 0;
 	int** graph;
 protected:
-
 public:
 
 	/*///////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
@@ -61,28 +61,11 @@ public:
 	}
 
 	/************************************************** Others *******************************************************/
-	int getN() const {
-		return N;
-	}
 
 	void put (const int & from, const int & to, const int & value) {
 		graph[from-1][to-1] = value;
 	}
 
-	std::vector<int> get (const int & position) const {
-		std::vector<int> vector;
-		for (int i = 0; i < N; ++i)
-		{
-			if(graph[position-1][i] > 0) {
-				vector.push_back(i+1);
-			}
-		}
-		return vector;
-	}
-
-	int get (const int & first, const int second) const {
-		return graph[first-1][second-1];
-	}
 
 	void printGraph() const {
 		for (int i = 0; i < N; ++i)
@@ -119,6 +102,35 @@ public:
 				graph[i][j] = 0;
 			}
 		}
+	}
+
+	/************************************************* Getters *******************************************************/
+	std::vector<int> get (const int & position) const {
+		std::vector<int> vector;
+		for (int i = 0; i < N; ++i) {
+			if(graph[position-1][i] > 0) {
+				vector.push_back(i+1);
+			}
+		}
+		return vector;
+	}
+
+
+	int get (const int & first, const int second) const {
+		return graph[first-1][second-1];
+	}
+
+	int getN() const {
+		return N;
+	}
+
+	int getE() const {
+		return E;
+	}
+
+	/************************************************* Setters *******************************************************/
+	void setE(int E) {
+		this->E = E;
 	}
 };
 

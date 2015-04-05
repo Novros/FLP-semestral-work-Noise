@@ -25,7 +25,6 @@
 
 /*///////////////////////////////////////////////////////////////////////////////////////////////////////////////////*/
 // OWN HEADERS
-#include "../other/Logger.hpp"
 #include "State.hpp"
 #include "StateCreateGraph.hpp"
 #include "StateFindPath.hpp"
@@ -45,8 +44,7 @@ class Automaton {
 	// Variables
 private:
 	int caseNumber = 1;
-	rlib::Logger* log;
-	State* state;
+	State* state = nullptr;
 	std::vector<std::string> lines;
 	GraphList graph;
 protected:
@@ -73,11 +71,8 @@ public:
 		caseNumber++;
 	}
 
-	/************************************************* Getters *******************************************************/
-
 	/************************************************* Setters *******************************************************/
 	void setInput(std::string input) {
-		//log->debug_line("Setting input string in automaton...");
 		lines = parseString(input, "\n");
 	}
 
