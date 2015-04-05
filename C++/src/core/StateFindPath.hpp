@@ -78,9 +78,9 @@ private:
 	int findDecibelMaxValue(const GraphList & graph) {
 		int max = 0;
 		int temp = to;
-		std::cout << std::endl;
+		//std::cout << std::endl;
 		while(temp != from) {
-			std::cout << path[temp] << "-> " << temp << " " << graph.get(path[temp],temp) << std::endl;
+			//std::cout << path[temp] << "-> " << temp << " " << graph.get(path[temp],temp) << std::endl;
 			if(graph.get(path[temp],temp) > max) {
 				max = graph.get(path[temp],temp);
 			}
@@ -90,18 +90,18 @@ private:
 	}
 
 	void DFSProjdi(const GraphList & graph, int u) {
-		//stav[u] = OPEN;
+		stav[u] = OPEN;
 		std::vector<int> adjected = graph.get(u);
 		for (auto i = adjected.begin(); i != adjected.end(); ++i) {
-			//if (stav[*i] == FRESH)  {
+			if (stav[*i] == FRESH) {
 				path[*i] = u;
 				if(*i == to) {	
 					decibels.push_back(findDecibelMaxValue(graph));
 				}
 				DFSProjdi(graph, *i);
-			//}
+			}
 		}
-		//stav[u] = CLOSED;
+		stav[u] = CLOSED;
 	}
 
 	int getLeastDecibels() {

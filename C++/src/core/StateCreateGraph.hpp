@@ -66,6 +66,7 @@ public:
 		}
 
 		graph.put(std::stoi(values[0]),std::stoi(values[1]),std::stoi(values[2]));
+		graph.put(std::stoi(values[1]),std::stoi(values[0]),std::stoi(values[2]));
 		return 0;
 	}
 };

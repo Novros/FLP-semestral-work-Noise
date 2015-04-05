@@ -110,7 +110,6 @@ public:
 				for (auto j = std::get<1>(*i).begin(); j != std::get<1>(*i).end(); ++j){
 					vector.push_back(std::get<0>(*j));
 				}
-				return vector;
 			}
 		}
 		return vector;
