@@ -12,7 +12,7 @@ all: $(EXE)
 build: $(EXE)
 
 run: all
-	./$(EXE)
+	./$(EXE) test.txt
 
 debug: all
 	$(DEBUGGER) ./$(EXE)

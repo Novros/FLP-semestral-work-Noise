@@ -102,6 +102,7 @@ public:
 	}
 
 	/************************************************** Print *******************************************************/
+	// TODO změnit na tempalte
 	void print(const std::string & text) {
 		*out_stream << text;
 	}

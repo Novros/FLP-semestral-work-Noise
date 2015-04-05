@@ -76,13 +76,10 @@ public:
 	}
 
 	std::string readFile() {
-		std::string line;
-		if (inputStream.is_open()) {
-			while ( getline (inputStream, line) ) {
-		  		//cout << line << '\n';
-		  	}
-		}
-		return "";
+		std::stringstream stream;
+		stream << inputStream.rdbuf();
+		std::string file = stream.str();
+		return file;
 	}
 
 };

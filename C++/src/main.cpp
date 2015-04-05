@@ -23,10 +23,9 @@ int main(int argc, char** argv) {
 
 	if(argc == 2) {
 		InputFromFile ifile(argv[1]);
-		automaton.setInput(ifile.getStream());
+		automaton.setInput(ifile.readFile());
+		automaton.run();
 	}
-
-	automaton.run();
 
 	log.info_line("Closing application.");
 }
