@@ -1,0 +1,18 @@
+Case #1
+80
+60
+60
+
+Case #2
+40
+no path
+80
+
+Case #3
+75
+
+Case #4
+54
+
+Case #5
+70
