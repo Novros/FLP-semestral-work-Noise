@@ -4,6 +4,12 @@
 	;(display line)
 	;(newline)
 	)
+
+;;===================================== Basics ====================================
+(define atom?
+	(lambda (x)
+		(or (number? x) (symbol? x))))
+
 ;;===================================== List ====================================
 ; Return value from list at passed index.
 (define listAt
@@ -21,6 +27,18 @@
 			(cons value (cdr listL))
 			(cons (car listL) (listChangeValue (cdr listL) (- index 1) value)))))
 
+(define findMin
+	(lambda (listL)
+		(mininum listL 9999)))
+
+(define mininum
+	(lambda (listL min)
+		(if (null? listL)
+			min
+			(if (> min car listL)
+				(mininum (cdr listL) (car listL))
+				(mininum (cdr listL) min)))))
+
 ;;===================================== Table ====================================
 ; Return column in table.
 (define getColumn
@@ -33,6 +51,15 @@
 (define getValueFromTable
 	(lambda (table first second)
 		(listAt (listAt table first) second)))
+
+; Flatten n dimension structure to List
+(define flatten
+	(lambda (s)
+		(if (null? s)
+			'()
+			(if (atom? s)
+				(list s)
+				(append (flatten (car s)) (flatten (cdr s)))))))
 
 ;;===================================== Graph ====================================
 
@@ -84,29 +111,42 @@
 		(neighboursInLine (listAt table node) 1)))
 
 ;;----------------------------------- DFS -------------------------------
+(define DFS
+	(lambda (graph from to edgeCount)
+		(checkDepth graph from to 0 0 edgeCount)))
+
+(define checkDepth
+	(lambda (graph u to maxDecibels depth maxDepth)
+		(if (> depth maxDepth)
+			9999
+			(forEachNeighbor graph u to (neighbours graph u) maxDecibels depth maxDepth))))
+
 (define forEachNeighbor
-	(lambda (graph u to adjectedNodes maxDecibels)
+	(lambda (graph u to adjectedNodes maxDecibels depth maxDepth)
 		(if (null? adjectedNodes)
 			'()
-			(cons (getMinimalDec graph u (car adjectedNodes) to maxDecibels) (forEachNeighbor graph u to (cdr adjectedNodes) maxDecibels)))))
+			(cons (getMinimalDecibels graph u (car adjectedNodes) to maxDecibels depth maxDepth)
+				  (forEachNeighbor graph u to (cdr adjectedNodes) maxDecibels depth maxDepth)))))
 
-(define getMinimalDec
-	(lambda (graph u i to maxDecibels)
+(define getMinimalDecibels
+	(lambda (graph u i to maxDecibels depth maxDepth)
 		(if (= i to)
 			(if (< maxDecibels (getValueFromTable graph u i))
 				(getValueFromTable graph u i)
-				(maxDecibels))
-			(nextHop graph u i to maxDecibels))))
+				maxDecibels)
+			(nextHopOfDFS graph u i to maxDecibels depth maxDepth))))
 
-(define nextHop
-	(lambda (graph u i to maxDecibels)
+(define nextHopOfDFS
+	(lambda (graph u i to maxDecibels depth maxDepth)
 		(if (< maxDecibels (getValueFromTable graph u i))
-			(forEachNeighbor graph i to (neighbours graph i) (getValueFromTable graph u i))
-			(forEachNeighbor graph i to (neighbours graph i) maxDecibels))))
+			(checkDepth graph i to (getValueFromTable graph u i) (+ depth 1) maxDepth)
+			(checkDepth graph i to maxDecibels (+ depth 1) maxDepth)) ))
 
 ;;===================================== Test ====================================
 (define testGraph
-	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 5 7 40)
-	)
+	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 4 7 70) 5 7 40) 6 7 140))
 
-(forEachNeighbor testGraph 7 5 (neighbours testGraph 7) 0)
+;(findMin (flatten (DFS testGraph 1 3 9)) )
+
+
+(flatten testGraph)
