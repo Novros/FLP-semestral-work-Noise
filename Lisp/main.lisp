@@ -1,15 +1,30 @@
-; Čtení ze souboru po řádcích
-(define file (open-input-file "test.txt"))
-(do ((line (read-line file) (read-line file))) ((eof-object? line))
-	;(display line)
-	;(newline)
-	)
-
 ;;===================================== Basics ====================================
 ; Return if element of list is atom. (number or symbol)
 (define atom?
 	(lambda (x)
 		(or (number? x) (symbol? x))))
+
+(define caar
+	(lambda (listL)
+		(car (cdr listL))))
+
+(define caaar
+	(lambda (listL)
+		(caar (cdr listL))))
+
+(define ccdr
+	(lambda (listL)
+		(cdr (cdr listL))))
+
+(define cccdr
+	(lambda (listL)
+		(cdr (cdr (cdr listL)))))
+
+(define cdrAt
+	(lambda (listL index)
+		(if (= index 1)
+			(cdr listL)
+			(cdrAt (cdr listL) (- index 1)))))
 
 ;;===================================== List ====================================
 ; Return value from list at passed index.
@@ -157,8 +172,35 @@
 			(checkDepth graph i to (getValueFromTable graph u i) (+ depth 1) maxDepth)
 			(checkDepth graph i to maxDecibels (+ depth 1) maxDepth)) ))
 
-;;===================================== Test ====================================
-(define testGraph
-	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 4 7 70) 5 7 40) 6 7 140))
 
-(minDFS testGraph 6 2 9)
+;;===================================== File ====================================
+
+;;===================================== Test ====================================
+;(define testGraph
+;	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 4 7 70) 5 7 40) 6 7 140))
+
+;(minDFS testGraph 6 2 9)
+
+;(define program
+;	(lambda (fileName)
+;		(testcase (read-file fileName))))
+
+;(define testcase
+;;	(lambda file)
+;		())
+
+(define file (read-file "test.txt"))
+
+(define addEdgesFromFile
+	(lambda (file graph count)
+		(if (= count 1)
+			graph
+			(addEdgesFromFile (cccdr file) (addEdge graph (car file) (caar file) (caaar file)) (- count 1)))))
+
+(define findPaths
+	(lambda (file graph count edgeCount)
+		(if (= count 0)
+			file
+			(findPaths (ccdr file) graph (- count 1) edgeCount)))) ;(display (minDFS graph (car file) (caar file) edgeCount)))))
+
+(findPaths (cdrAt file (* (+ (caar file) 1) 3 )) (addEdgesFromFile (cccdr file) (createGraph (car file)) (caar file)) (caaar file) (caar file))
