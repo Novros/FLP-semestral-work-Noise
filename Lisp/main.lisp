@@ -6,6 +6,7 @@
 	)
 
 ;;===================================== Basics ====================================
+; Return if element of list is atom. (number or symbol)
 (define atom?
 	(lambda (x)
 		(or (number? x) (symbol? x))))
@@ -27,15 +28,19 @@
 			(cons value (cdr listL))
 			(cons (car listL) (listChangeValue (cdr listL) (- index 1) value)))))
 
+; Find minimun in list.
 (define findMin
 	(lambda (listL)
-		(mininum listL 9999)))
+		(if (null? listL)
+			'()
+			(mininum (cdr listL) (car listL)))))
 
+; Helper function for finding minimum.
 (define mininum
 	(lambda (listL min)
 		(if (null? listL)
 			min
-			(if (> min car listL)
+			(if (> min (car listL))
 				(mininum (cdr listL) (car listL))
 				(mininum (cdr listL) min)))))
 
@@ -111,16 +116,24 @@
 		(neighboursInLine (listAt table node) 1)))
 
 ;;----------------------------------- DFS -------------------------------
+; Find minimal value of decibels from all routes to destination.
+(define minDFS
+	(lambda (graph from to edgeCount)
+		(findMin (flatten (DFS graph from to edgeCount)))))
+
+; Find all routes to destination, but return only max decibels by route.
 (define DFS
 	(lambda (graph from to edgeCount)
 		(checkDepth graph from to 0 0 edgeCount)))
 
+; Chechk if depth of DFS is not too deep.
 (define checkDepth
 	(lambda (graph u to maxDecibels depth maxDepth)
 		(if (> depth maxDepth)
-			9999
+			999999 ; Return infinity.
 			(forEachNeighbor graph u to (neighbours graph u) maxDecibels depth maxDepth))))
 
+; For each neighbor of node u do DFS. 
 (define forEachNeighbor
 	(lambda (graph u to adjectedNodes maxDecibels depth maxDepth)
 		(if (null? adjectedNodes)
@@ -128,6 +141,7 @@
 			(cons (getMinimalDecibels graph u (car adjectedNodes) to maxDecibels depth maxDepth)
 				  (forEachNeighbor graph u to (cdr adjectedNodes) maxDecibels depth maxDepth)))))
 
+; Check if we are in destination.
 (define getMinimalDecibels
 	(lambda (graph u i to maxDecibels depth maxDepth)
 		(if (= i to)
@@ -136,6 +150,7 @@
 				maxDecibels)
 			(nextHopOfDFS graph u i to maxDecibels depth maxDepth))))
 
+; Go to next edge and set new maximum of decibels or stay old.
 (define nextHopOfDFS
 	(lambda (graph u i to maxDecibels depth maxDepth)
 		(if (< maxDecibels (getValueFromTable graph u i))
@@ -146,7 +161,4 @@
 (define testGraph
 	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 4 7 70) 5 7 40) 6 7 140))
 
-;(findMin (flatten (DFS testGraph 1 3 9)) )
-
-
-(flatten testGraph)
+(minDFS testGraph 6 2 9)
