@@ -10,14 +10,14 @@
 	(lambda (listL position)
 		(if (null? listL)
 			'()
-			(if (eq? position 0)
+			(if (= position 1)
 				(car listL)
 				(listAt (cdr listL) (- position 1))))))
 
 ; Change value at list at index.
 (define listChangeValue
 	(lambda (listL index value)
-		(if (= index 0)
+		(if (= index 1)
 			(cons value (cdr listL))
 			(cons (car listL) (listChangeValue (cdr listL) (- index 1) value)))))
 
@@ -56,12 +56,17 @@
 	(lambda (size)
 		(createTable size size)))
 
-; Add edge to graph.
+; Add directed edge to graph.
+(define addDirectedEdge
+	(lambda (table start end value)
+		(if (= start 1)
+			(cons (listChangeValue (car table) end value) (cdr table))
+			(cons (car table) (addDirectedEdge (cdr table) (- start 1) end value)))))
+
+; Add biderected edge to graph.
 (define addEdge
 	(lambda (table start end value)
-		(if (= start 0)
-			(cons (listChangeValue (car table) end value) (cdr table))
-			(cons (car table) (addEdge (cdr table) (- start 1) end value)))))
+		(addDirectedEdge (addDirectedEdge table start end value) end start value)))
 
 ;;----------------------------------- Neighbours -------------------------------
 ; Return neighbours from list.
@@ -76,10 +81,32 @@
 ; Return neighbours from table.
 (define neighbours
 	(lambda (table node) 
-		(neighboursInLine (listAt table node) 0)))
+		(neighboursInLine (listAt table node) 1)))
 
+;;----------------------------------- DFS -------------------------------
+(define forEachNeighbor
+	(lambda (graph u to adjectedNodes maxDecibels)
+		(if (null? adjectedNodes)
+			'()
+			(cons (getMinimalDec graph u (car adjectedNodes) to maxDecibels) (forEachNeighbor graph u to (cdr adjectedNodes) maxDecibels)))))
+
+(define getMinimalDec
+	(lambda (graph u i to maxDecibels)
+		(if (= i to)
+			(if (< maxDecibels (getValueFromTable graph u i))
+				(getValueFromTable graph u i)
+				(maxDecibels))
+			(nextHop graph u i to maxDecibels))))
+
+(define nextHop
+	(lambda (graph u i to maxDecibels)
+		(if (< maxDecibels (getValueFromTable graph u i))
+			(forEachNeighbor graph i to (neighbours graph i) (getValueFromTable graph u i))
+			(forEachNeighbor graph i to (neighbours graph i) maxDecibels))))
 
 ;;===================================== Test ====================================
-(neighbours '((0 88 0 32) (0 0 0 70) (0 1 0 0) (3 0 0 0)) 0)
+(define testGraph
+	(addEdge (addEdge (addEdge (addEdge (addEdge (addEdge (createGraph 7) 1 2 50) 1 3 60) 2 4 120) 3 6 50) 4 6 80) 5 7 40)
+	)
 
-(addEdge (createGraph 5) 1 2 5)
+(forEachNeighbor testGraph 7 5 (neighbours testGraph 7) 0)
