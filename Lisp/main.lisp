@@ -172,51 +172,60 @@
 			(checkDepth graph i to (getValueFromTable graph u i) (+ depth 1) maxDepth)
 			(checkDepth graph i to maxDecibels (+ depth 1) maxDepth)) ))
 
-
 ;;===================================== File ====================================
-
-;;===================================== Test ====================================
-(define testFile (read-file "test.txt"))
-
-(define program
-	(lambda (file numberOfCase)
-		(if (null? file)
-			#F
-			(if (= (car file) 0)
-				#T
-				(and (and (testcase (cdrAt file 3) (car file) (caar file) (caaar file) numberOfCase) (newline)) (program (cdrAt file (+ (* (+ (caar file) 1) 3) (* (caaar file) 2))) (+ numberOfCase 1))) ))))
-
-(define testcase
-	(lambda (file sizeOfGraph numberOfEdges numberOfTests numberOfCase)
-		(if (null? file)
-			#F
-			(and (displayCase numberOfCase) (findPaths (cdrAt file (* numberOfEdges 3 )) (addEdgesFromFile file (createGraph sizeOfGraph) numberOfEdges) numberOfTests numberOfEdges)))))
-
+; Add edges from file to graph.
 (define addEdgesFromFile
 	(lambda (file graph count)
-		(if (= count 1)
+		(if (= count 0)
 			graph
 			(addEdgesFromFile (cccdr file) (addEdge graph (car file) (caar file) (caaar file)) (- count 1)))))
 
-(define findPaths
-	(lambda (file graph count edgeCount)
-		(if (= count 0)
-			file
-			(cons (findPaths (ccdr file) graph (- count 1) edgeCount) (displayAndFind graph (car file) (caar file) edgeCount)) ))) ;(display (minDFS graph (car file) (caar file) edgeCount)))))
-
+;;===================================== Display ====================================
+; Find minimal tolerance of noise and display it.
 (define displayAndFind
 	(lambda (graph from to edgeCount)
 		(and (displayValueFromFind (minDFS graph from to edgeCount)) (newline))))
 
+; Display value or "no path"
 (define displayValueFromFind
 	(lambda (value)
 		(if (= value 999999)
 			(display "no path")
 			(display value))))
 
+; Display case number and text with newline.
 (define displayCase
 	(lambda (numberOfCase)
 		(and (and (display "Case #") (display numberOfCase)) (newline))))
 
+;;===================================== Main program ====================================
+; Start program with gived file.
+(define program (lambda (filePath)
+	(programLoop (read-file filePath) 1)))
 
-(program testFile 1)
+; Program loop which creates cases. It take file (in list) and do solution.
+(define programLoop
+	(lambda (file numberOfCase)
+		(if (null? file)
+			#F
+			(if (= (car file) 0)
+				#T
+				(and (and (testcase (cccdr file) (car file) (caar file) (caaar file) numberOfCase) (newline)) (programLoop (cdrAt file (+ (* (+ (caar file) 1) 3) (* (caaar file) 2))) (+ numberOfCase 1))) ))))
+
+; Start new case for test.
+(define testcase
+	(lambda (file sizeOfGraph numberOfEdges numberOfTests numberOfCase)
+		(if (null? file)
+			#F
+			(and (displayCase numberOfCase) (findPaths (cdrAt file (* numberOfEdges 3 )) (addEdgesFromFile file (createGraph sizeOfGraph) numberOfEdges) numberOfTests numberOfEdges)))))
+
+; Find all paths for number of tests.
+(define findPaths
+	(lambda (file graph count edgeCount)
+		(if (= count 0)
+			file
+			(cons (findPaths (ccdr file) graph (- count 1) edgeCount) (displayAndFind graph (car file) (caar file) edgeCount)) )))
+
+;;===================================== Test ====================================
+; How to start program.
+(program "test.txt")
