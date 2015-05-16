@@ -54,3 +54,21 @@ valuePath([Start, Node | Path], [ X | ValuePath]) :- valuePath([Node | Path], Va
 allMinDFS(Start, End, Max) :- dfs(Start, End, Path), valuePath(Path, ValuePath), max(ValuePath, Max).
 
 minDFS(Start, End, Min) :- setof(X, allMinDFS(Start, End, X), [Min | List]).
+
+readFile(Stream, []) :- at_end_of_stream(Stream).
+readFile(Stream, [X | List]) :- not(at_end_of_stream(Stream)), get_char(Stream, X), readFile(Stream,List).
+
+removeBlanks(List1, List2) :- removeBlanks(List1, [], List2).
+removeBlanks([], All, All).
+removeBlanks([X | List], List2, [X | Temp]) :- char_type(X,digit), removeBlanks(List, List2, Temp).
+removeBlanks([X | List], List2, Temp) :- removeBlanks(List, List2, Temp).
+
+main :- open("test.txt", read, Stream),
+	readFile(Stream,Lines),
+    close(Stream),
+    removeBlanks(Lines,X),
+    write(X), nl.
+
+displayCase(NumberCase) :- write('Case #'), write(NumberCase), nl.
+
+%createGraph(Lines) :- .
