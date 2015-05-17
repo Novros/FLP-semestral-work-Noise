@@ -1,22 +1,3 @@
-edge(1,2,50).
-edge(2,1,50).
-edge(1,3,60).
-edge(3,1,60).
-edge(2,4,120).
-edge(4,2,120).
-edge(2,5,90).
-edge(5,2,90).
-edge(3,6,50).
-edge(6,3,50).
-edge(4,6,80).
-edge(6,4,80).
-edge(4,7,70).
-edge(7,4,70).
-edge(5,7,40).
-edge(7,5,40).
-edge(6,7,140).
-edge(7,6,140).
-
 % maxHelp(+A, +B, -X)
 % Returns in X maximum from two values.
 maxHelp(A, B, X) :- A > B, X is A.
@@ -58,17 +39,36 @@ minDFS(Start, End, Min) :- setof(X, allMinDFS(Start, End, X), [Min | List]).
 readFile(Stream, []) :- at_end_of_stream(Stream).
 readFile(Stream, [X | List]) :- not(at_end_of_stream(Stream)), get_char(Stream, X), readFile(Stream,List).
 
-removeBlanks(List1, List2) :- removeBlanks(List1, [], List2).
-removeBlanks([], All, All).
-removeBlanks([X | List], List2, [X | Temp]) :- char_type(X,digit), removeBlanks(List, List2, Temp).
-removeBlanks([X | List], List2, Temp) :- removeBlanks(List, List2, Temp).
+parseInput(List1, List2) :- parseInput(List1, [], List2).
+parseInput([], All, All).
+parseInput([X, Y, Z | List], List2, [Number | Temp]) :-
+	char_type(X,digit), char_type(Y,digit), char_type(Z,digit),
+	atom_number(X,HundredNumber), atom_number(Y,TensNumber), atom_number(Z, Units),
+	Hundreds is HundredNumber * 100, Tens is TensNumber * 10, Number is Hundreds + Tens + Units,
+	parseInput(List, List2, Temp).
+parseInput([X, Y | List], List2, [Number | Temp]) :-
+	char_type(X,digit), char_type(Y,digit),
+	atom_number(X,TensNumber), atom_number(Y,Units),
+	Tens is TensNumber * 10, Number is Tens + Units,
+	parseInput(List, List2, Temp).
+parseInput([X | List], List2, [Number | Temp]) :- char_type(X,digit), atom_number(X,Number), parseInput(List, List2, Temp).
+parseInput([X | List], List2, Temp) :- parseInput(List, List2, Temp).
 
 main :- open("test.txt", read, Stream),
 	readFile(Stream,Lines),
     close(Stream),
-    removeBlanks(Lines,X),
-    write(X), nl.
+    parseInput(Lines,X),
+    runCases(X,1).
 
 displayCase(NumberCase) :- write('Case #'), write(NumberCase), nl.
 
-%createGraph(Lines) :- .
+createGraph(Lines, 0, Lines).
+createGraph([NodeA, NodeB, Value | Lines], Index, X) :- Index1 is Index-1, createGraph(Lines, Index1, X), asserta(edge(NodeB,NodeA,Value)), asserta(edge(NodeA,NodeB,Value)).
+
+runTests(Lines, 0, Lines).
+runTests([Start, End | Lines], Index, X) :- minDFS(Start,End,Min),write(Min),nl,Index1 is Index-1, runTests(Lines,Index1, X).
+
+runCase(Lines,Edges,Tests,Y) :- createGraph(Lines,Edges,X),runTests(X,Tests,Y).
+
+runCases([Size,Edges,Tests], NumberOfCase) :- Size =:= 0, Edges =:= 0, Tests =:= 0.
+runCases([Size,Edges,Tests | List], NumberOfCase) :- Size > 0, displayCase(NumberOfCase),runCase(List,Edges,Tests,X), nl, NumberOfCase1 is NumberOfCase + 1, runCases(X,NumberOfCase1).
