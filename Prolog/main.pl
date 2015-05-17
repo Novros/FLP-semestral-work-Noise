@@ -112,18 +112,19 @@ createGraph([NodeA, NodeB, Value | Lines], Index, X) :-
 removeGraph(Lines, 0, Lines).
 removeGraph([NodeA, NodeB, Value | Lines], Index, X) :-
 	Index1 is Index-1,
+	removeGraph(Lines, Index1, X),
 	retract(edge(NodeB,NodeA,Value)),
-	retract(edge(NodeA,NodeB,Value)),
-	removeGraph(Lines, Index1, X).
+	retract(edge(NodeA,NodeB,Value)).
 
 % Run test from list.
 % runTests(+Lines, +NumberOfTests, -LinesWithouReadLines).
 runTests(Lines, 0, Lines).
 runTests([Start, End | Lines], Index, X) :- minDFS(Start,End,Min),write(Min),nl,Index1 is Index-1, runTests(Lines,Index1, X).
+runTests([Start, End | Lines], Index, X) :- write('no path'),nl,Index1 is Index-1, runTests(Lines,Index1, X).
 
 % Run case for gived lines.
 % runCase(+Lines, +NumberOfEdges, +NumberOfTests, -LinesWithouReadLines)
-runCase(Lines,Edges,Tests,Y) :- createGraph(Lines,Edges,X), runTests(X,Tests,Y). removeGraph(Lines,Edges,Z).
+runCase(Lines,Edges,Tests,Y) :- createGraph(Lines,Edges,X), runTests(X,Tests,Y), removeGraph(Lines,Edges,X).
 
 % Run all cases in list.
 % runCases(+List, +NumberOfCase)
