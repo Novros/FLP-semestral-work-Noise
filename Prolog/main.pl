@@ -120,7 +120,7 @@ removeGraph([NodeA, NodeB, Value | Lines], Index, X) :-
 % runTests(+Lines, +NumberOfTests, -LinesWithouReadLines).
 runTests(Lines, 0, Lines).
 runTests([Start, End | Lines], Index, X) :- minDFS(Start,End,Min),write(Min),nl,Index1 is Index-1, runTests(Lines,Index1, X).
-runTests([Start, End | Lines], Index, X) :- write('no path'),nl,Index1 is Index-1, runTests(Lines,Index1, X).
+runTests([Start, End | Lines], Index, X) :- write('no path'),nl,Index1 is Index-1, runTests(Lines,Index1, X). % Print no path, if path not exists.
 
 % Run case for gived lines.
 % runCase(+Lines, +NumberOfEdges, +NumberOfTests, -LinesWithouReadLines)
@@ -139,7 +139,8 @@ runCases([Size,Edges,Tests | List], NumberOfCase) :-
 
 %%%%-------------------------------------------------------- Main -----------------------------------------------------
 % Main procedure for run program.
-main :- open("test.txt", read, Stream),
+main :-
+	open("test.txt", read, Stream),
 	readFile(Stream,Lines),
     close(Stream),
     parseInput(Lines,X),
