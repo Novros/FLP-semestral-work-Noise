@@ -62,5 +62,5 @@
 		(if (= count 0)
 			file
 			(and
-				(findPaths (ccdr file) graph (- count 1) edgeCount)
-				(displayAndFind graph (car file) (caar file) edgeCount)) )))
+				(displayAndFind graph (car file) (caar file) edgeCount)
+				(findPaths (ccdr file) graph (- count 1) edgeCount)))))
